@@ -7,6 +7,17 @@
 //Arduino Libraries
 #include <Time.h>
 
+//Flash memory class
+//struct data_t
+//{
+//  // we will use java's famous 0xCAFEBABE magic number to indicate
+//  // that the flash page has been initialized previously by our
+//  // sketch
+//  int magic_number;
+//  int hour;
+//  int minute;
+//};
+
 static const char* NAME = "Violet Watch";
 static const int ADVERTISEMENT_INTERVAL = 675;
 static float UV_THRESHOLD = .5;
@@ -17,6 +28,21 @@ int goldenMinute;
 int uvMinutes = 0;
 boolean goalMet = false;
 boolean sunsetFlag = false;
+
+//Flash object
+//struct data_t *flash = (data_t*)ADDRESS_OF_PAGE(MY_FLASH_PAGE);
+//
+//void flashSave()
+//{
+//  flashPageErase(MY_FLASH_PAGE);
+//    
+//  struct data_t value;
+//  value.magic_number = 0xCAFEBABE;
+//  value.hour = hour();
+//  value.minute = minute();
+//
+//  flashWriteBlock(flash, &value, sizeof(value)); 
+//}
 
 void advertise(const char *data, uint32_t ms) {
   RFduinoBLE.advertisementData = data;
@@ -130,6 +156,13 @@ void RFduinoBLE_onReceive(char *data, int len) {
 void setup() {
   // put your setup code here, to run once:
 
+  // if flash page is not initialized, initialize it
+//  if (flash->magic_number != 0xCAFEBABE) {
+//    flashSave();
+//  } else {
+//    setTime(flash->hour, flash->minute, 0, 0, 0, 0);    
+//  }
+
   //Set Device Parameters
   RFduinoBLE.deviceName = NAME;
   RFduinoBLE.advertisementInterval = ADVERTISEMENT_INTERVAL;
@@ -161,6 +194,10 @@ void loop() {
     uvMinutes = 0;
     goalMet = false;
     sunsetFlag = false;
+  }
+  
+  if (minute() % 5 == 0) {
+    flashSave();
   }
 
   //Check UV Data and if it's sunset every minute
