@@ -28,11 +28,11 @@ var onSuccess = function(position) {
 	minute = new Date().getMinutes();
 	var AMPM = "AM";
 
-	if (minute == 0) {
+	if (minute < 10) {
 		minute = '0' + parseInt(minute);
 	}
 
-	if (goldenMinute == 0) {
+	if (goldenMinute < 10) {
 		goldenMinute = '0' + parseInt(goldenMinute);
 	}
 
