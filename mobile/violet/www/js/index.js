@@ -52,7 +52,7 @@ var app = {
     // Update DOM on a Received Event
     refreshDeviceList: function() {
         deviceList.innerHTML = ''; // empties the list
-        rfduino.discover(5, app.onDiscoverDevice, app.onError);
+        rfduino.discover(9, app.onDiscoverDevice, app.onError);
     },
     onDiscoverDevice: function(device) {
         var listItem = document.createElement('li'),

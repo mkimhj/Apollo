@@ -77,12 +77,27 @@ int tapCallback(uint32_t ulPin) {
   return 0;
 }
 
+void blinkPixel(uint16_t n, uint32_t c1, uint32_t c2) {
+  for (int i = 0; i < 15; i++) {
+    set_pixel_color(n, c1);
+    show();
+    delay(100);
+    set_pixel_color(n, c2);
+    show();
+    delay(100);  
+  }
+}
+
 void setHands() {
-  set_pixel_color(hourFormat12(), Color(255, 0, 255));
-  set_pixel_color(floor(minute()/5), Color(0, 255, 255));
-  show();
+  if (hourFormat12() != floor(minute()/5)) {
+    set_pixel_color(hourFormat12(), Color(255, 0, 255));
+    set_pixel_color(floor(minute()/5), Color(0, 255, 255));
+    show();
+    delay(3000);
+  } else {
+    blinkPixel(hourFormat12(), Color(255, 0, 255), Color(0, 255, 255));
+  }
   
-  delay(3000);
 
   set_pixel_color(hourFormat12(), Color(0, 0, 0));
   set_pixel_color(floor(minute()/5), Color(0, 0, 0));
