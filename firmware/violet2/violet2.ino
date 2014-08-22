@@ -97,7 +97,7 @@ void checkUV() {
     UVIntensity = .25 + getUVIntensity();
   }
   
-  if (hour() == 0) {
+  if (hour() < 4 && hour() > 10) {
     UV_THRESHOLD = .9*UV_THRESHOLD + .1*UVIntensity;
   }
   
@@ -195,10 +195,10 @@ void loop() {
     goalMet = false;
     sunsetFlag = false;
   }
-  
-  if (minute() % 5 == 0) {
-    flashSave();
-  }
+//  
+//  if (minute() % 5 == 0) {
+//    flashSave();
+//  }
 
   //Check UV Data and if it's sunset every minute
   checkUV();

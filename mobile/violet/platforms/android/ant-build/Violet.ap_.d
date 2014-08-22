@@ -45,6 +45,8 @@
 /Users/mkim-hj/Documents/Nokia/Apollo/mobile/violet/platforms/android/assets/www/fonts/glyphicons-halflings-regular.ttf \
 /Users/mkim-hj/Documents/Nokia/Apollo/mobile/violet/platforms/android/assets/www/fonts/glyphicons-halflings-regular.woff \
 /Users/mkim-hj/Documents/Nokia/Apollo/mobile/violet/platforms/android/assets/www/img/logo.png \
+/Users/mkim-hj/Documents/Nokia/Apollo/mobile/violet/platforms/android/assets/www/img/menu.jpg \
+/Users/mkim-hj/Documents/Nokia/Apollo/mobile/violet/platforms/android/assets/www/img/menudots.png \
 /Users/mkim-hj/Documents/Nokia/Apollo/mobile/violet/platforms/android/assets/www/js/bootstrap.min.js \
 /Users/mkim-hj/Documents/Nokia/Apollo/mobile/violet/platforms/android/assets/www/js/date.js \
 /Users/mkim-hj/Documents/Nokia/Apollo/mobile/violet/platforms/android/assets/www/js/geolocation.js \
