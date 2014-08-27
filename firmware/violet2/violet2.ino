@@ -19,7 +19,7 @@
 //};
 
 static const char* NAME = "Violet Watch";
-static const int ADVERTISEMENT_INTERVAL = 675;
+static const int ADVERTISEMENT_INTERVAL = 675 * 5;
 static float UV_THRESHOLD = .5;
 static const int UV_GOAL = 24;
 static bool connectionStatus = false;
@@ -28,21 +28,6 @@ int goldenMinute;
 int uvMinutes = 0;
 boolean goalMet = false;
 boolean sunsetFlag = false;
-
-//Flash object
-//struct data_t *flash = (data_t*)ADDRESS_OF_PAGE(MY_FLASH_PAGE);
-//
-//void flashSave()
-//{
-//  flashPageErase(MY_FLASH_PAGE);
-//    
-//  struct data_t value;
-//  value.magic_number = 0xCAFEBABE;
-//  value.hour = hour();
-//  value.minute = minute();
-//
-//  flashWriteBlock(flash, &value, sizeof(value)); 
-//}
 
 void advertise(const char *data, uint32_t ms) {
   RFduinoBLE.advertisementData = data;
@@ -77,30 +62,16 @@ int tapCallback(uint32_t ulPin) {
   return 0;
 }
 
-void blinkPixel(uint16_t n, uint32_t c1, uint32_t c2) {
-  for (int i = 0; i < 15; i++) {
-    set_pixel_color(n, c1);
-    show();
-    delay(100);
-    set_pixel_color(n, c2);
-    show();
-    delay(100);  
-  }
-}
-
 void setHands() {
-  if (hourFormat12() != floor(minute()/5)) {
-    set_pixel_color(hourFormat12(), Color(255, 0, 255));
-    set_pixel_color(floor(minute()/5), Color(0, 255, 255));
-    show();
-    delay(3000);
-  } else {
-    blinkPixel(hourFormat12(), Color(255, 0, 255), Color(0, 255, 255));
-  }
-  
+  int h = hourFormat12() % 12;
+  int m = floor(minute()/5);
+  set_pixel_color(h, Color(64, 0, 64));
+  set_pixel_color(m, Color(0, 64, 64));
+  show();
+  delay(3000);
 
-  set_pixel_color(hourFormat12(), Color(0, 0, 0));
-  set_pixel_color(floor(minute()/5), Color(0, 0, 0));
+  set_pixel_color(h, Color(0, 0, 0));
+  set_pixel_color(m, Color(0, 0, 0));
   show();
 }
 
@@ -115,7 +86,7 @@ void checkUV() {
   if (hour() < 4 && hour() > 10) {
     UV_THRESHOLD = .9*UV_THRESHOLD + .1*UVIntensity;
   }
-  
+//  Serial.println(UVIntensity);
   if (UVIntensity > UV_THRESHOLD) {
     uvMinutes++;
   }
@@ -156,7 +127,8 @@ void checkUVGoal() {
 }
 
 void RFduinoBLE_onReceive(char *data, int len) {
-  //Set 
+  Serial.println(data);
+  
   int hours = (data[0] - '0') * 10 + (data[1] - '0');
   int minutes =  (data[2] - '0') * 10 + (data[3] - '0');
   goldenHour =  (data[4] - '0') * 10 + (data[5] - '0');
@@ -170,13 +142,6 @@ void RFduinoBLE_onReceive(char *data, int len) {
 
 void setup() {
   // put your setup code here, to run once:
-
-  // if flash page is not initialized, initialize it
-//  if (flash->magic_number != 0xCAFEBABE) {
-//    flashSave();
-//  } else {
-//    setTime(flash->hour, flash->minute, 0, 0, 0, 0);    
-//  }
 
   //Set Device Parameters
   RFduinoBLE.deviceName = NAME;
@@ -210,11 +175,6 @@ void loop() {
     goalMet = false;
     sunsetFlag = false;
   }
-//  
-//  if (minute() % 5 == 0) {
-//    flashSave();
-//  }
-
   //Check UV Data and if it's sunset every minute
   checkUV();
   checkSunset();

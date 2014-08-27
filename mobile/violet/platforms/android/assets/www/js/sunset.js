@@ -36,13 +36,19 @@ var onSuccess = function(position) {
 		goldenMinute = '0' + parseInt(goldenMinute);
 	}
 
+
 	if (hour > 11) {
 		hour = hour - 12;
+		hour = hour.toString();
 		AMPM = "PM";
 	}
 
 	if (hour < 10) {
 		hour = '0' + parseInt(hour);
+	}
+
+	if (hour == 11) {
+		hour = hour.toString();
 	}
 
 	if (goldenHour < 10) {
