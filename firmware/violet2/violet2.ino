@@ -28,6 +28,7 @@ int goldenMinute;
 int uvMinutes = 0;
 boolean goalMet = false;
 boolean sunsetFlag = false;
+boolean DEMO = true;
 
 void advertise(const char *data, uint32_t ms) {
   RFduinoBLE.advertisementData = data;
@@ -62,17 +63,52 @@ int tapCallback(uint32_t ulPin) {
   return 0;
 }
 
+void turnOffLights() {
+  for (int i = 0; i < 12; i++) {
+    set_pixel_color(i, Color(0, 0, 0));
+  }
+  show();
+}
+
 void setHands() {
   int h = hourFormat12() % 12;
   int m = floor(minute()/5);
-  set_pixel_color(h, Color(64, 0, 64));
-  set_pixel_color(m, Color(0, 64, 64));
+  unsigned long millisecs = millis();
+  if (h == m) {
+    set_pixel_color(m, Color(32, 0, 32));
+  } else {
+    set_pixel_color(h, Color(64, 0, 0));
+    set_pixel_color(m, Color(0,  0, 64));
+  }
   show();
-  delay(3000);
+  delay(50);
+  while ((millis() - millisecs) < 3000) {
+    if (digitalRead(PIEZO) == LOW) {
+      displayUV();
+      break;
+    }
+  }
+  turnOffLights();
+}
 
-  set_pixel_color(h, Color(0, 0, 0));
-  set_pixel_color(m, Color(0, 0, 0));
-  show();
+void displayUV() {
+  int uvHands = floor(uvMinutes/2);
+  for (int i = 0; i <= uvHands; i++) {
+    set_pixel_color(i, Color(32, 32, 32));
+    delay(75);
+    show();
+  }
+  
+  for (int i = 0; i < 2; i++) {
+    set_pixel_color(uvHands, Color(0,0,0));
+    delay(200);
+    show();
+    set_pixel_color(uvHands, Color(32,32,32));
+    delay(200);
+    show();
+  }
+  
+  delay(500);
 }
 
 void checkUV() {
@@ -80,14 +116,15 @@ void checkUV() {
   RFduino_ULPDelay(1);
   float UVIntensity = 0;
   for (int i = 0; i < 4; i++) {
-    UVIntensity = .25 + getUVIntensity();
+    UVIntensity += .25*getUVIntensity();
   }
   
   if (hour() < 4 && hour() > 10) {
     UV_THRESHOLD = .9*UV_THRESHOLD + .1*UVIntensity;
   }
+  
 //  Serial.println(UVIntensity);
-  if (UVIntensity > UV_THRESHOLD) {
+  if (UVIntensity > UV_THRESHOLD*2) {
     uvMinutes++;
   }
   digitalWrite(ENABLE_PIN, LOW);
@@ -170,14 +207,22 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   //reset daily uv tracking
-  if (hour() == 0 && minute() == 0) {
-    uvMinutes = 0;
-    goalMet = false;
-    sunsetFlag = false;
+  if (DEMO) {
+    //Check UV Data and if it's sunset every minute
+    checkUV();
+    checkSunset();
+    checkUVGoal();
+    RFduino_ULPDelay(SECONDS(1));    
+  } else {
+    if (hour() == 0 && minute() == 0) {
+      uvMinutes = 0;
+      goalMet = false;
+      sunsetFlag = false;
+    }
+    //Check UV Data and if it's sunset every minute
+    checkUV();
+    checkSunset();
+    checkUVGoal();
+    RFduino_ULPDelay(MINUTES(1));
   }
-  //Check UV Data and if it's sunset every minute
-  checkUV();
-  checkSunset();
-  checkUVGoal();
-  RFduino_ULPDelay(MINUTES(1));
 }
