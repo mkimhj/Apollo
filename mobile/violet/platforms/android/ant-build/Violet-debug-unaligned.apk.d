@@ -1,4 +1,4 @@
-/Users/mkim-hj/Documents/Nokia/Apollo/mobile/violet/platforms/android/ant-build/Violet-debug-unaligned.apk : \
-/Users/mkim-hj/Documents/Nokia/Apollo/mobile/violet/platforms/android/ant-build/Violet.ap_ \
-/Users/mkim-hj/Documents/Nokia/Apollo/mobile/violet/platforms/android/ant-build/classes.dex \
-/Users/mkim-hj/Documents/Nokia/Apollo/mobile/violet/platforms/android/CordovaLib/ant-build/classes.jar \
+/Users/emilychen55/Documents/apps/Apollo/mobile/violet/platforms/android/ant-build/Violet-debug-unaligned.apk : \
+/Users/emilychen55/Documents/apps/Apollo/mobile/violet/platforms/android/ant-build/Violet.ap_ \
+/Users/emilychen55/Documents/apps/Apollo/mobile/violet/platforms/android/ant-build/classes.dex \
+/Users/emilychen55/Documents/apps/Apollo/mobile/violet/platforms/android/CordovaLib/ant-build/classes.jar \
