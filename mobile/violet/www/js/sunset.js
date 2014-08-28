@@ -47,7 +47,7 @@ var onSuccess = function(position) {
 		hour = '0' + parseInt(hour);
 	}
 
-	if (hour == 11) {
+	if (hour == 11 || hour == 10) {
 		hour = hour.toString();
 	}
 
