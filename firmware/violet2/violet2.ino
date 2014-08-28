@@ -28,10 +28,9 @@ int goldenMinute;
 int uvMinutes = 0;
 boolean goalMet = false;
 boolean sunsetFlag = false;
-boolean DEMO = true;
 
-void advertise(const char *data, uint32_t ms) {
-  RFduinoBLE.advertisementData = data;
+void advertise(uint32_t ms) {
+//  RFduinoBLE.advertisementData = data;
 
   //start advertising
   RFduinoBLE.begin();
@@ -40,7 +39,7 @@ void advertise(const char *data, uint32_t ms) {
   RFduino_ULPDelay(ms);
 
   //  //stop advertising
-  //  RFduinoBLE.end();
+  RFduinoBLE.end();
 }
 
 //This function will automatically run everytime the device is connected
@@ -81,9 +80,9 @@ void setHands() {
     set_pixel_color(m, Color(0,  0, 64));
   }
   show();
-  delay(50);
-  while ((millis() - millisecs) < 3000) {
-    if (digitalRead(PIEZO) == LOW) {
+  delay(75);
+  while ((millis() - millisecs) < 2000) {
+    if (analogRead(PIEZO) < 10) {
       displayUV();
       break;
     }
@@ -92,7 +91,9 @@ void setHands() {
 }
 
 void displayUV() {
+  turnOffLights();
   int uvHands = floor(uvMinutes/2);
+  uvHands = min(uvHands, 11);
   for (int i = 0; i <= uvHands; i++) {
     set_pixel_color(i, Color(32, 32, 32));
     delay(75);
@@ -199,7 +200,7 @@ void setup() {
   digitalWrite(ENABLE_PIN, LOW);
 
   //start advertising and serial connection
-  begin();
+  begin(); //what is this for again?..
   RFduinoBLE.begin();
   Serial.begin(9600);
 }
@@ -207,22 +208,14 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   //reset daily uv tracking
-  if (DEMO) {
-    //Check UV Data and if it's sunset every minute
-    checkUV();
-    checkSunset();
-    checkUVGoal();
-    RFduino_ULPDelay(SECONDS(1));    
-  } else {
-    if (hour() == 0 && minute() == 0) {
-      uvMinutes = 0;
-      goalMet = false;
-      sunsetFlag = false;
-    }
-    //Check UV Data and if it's sunset every minute
-    checkUV();
-    checkSunset();
-    checkUVGoal();
-    RFduino_ULPDelay(MINUTES(1));
+  if (hour() == 0 && minute() == 0) {
+    uvMinutes = 0;
+    goalMet = false;
+    sunsetFlag = false;
   }
+  //Check UV Data and if it's sunset every minute
+  checkUV();
+  checkSunset();
+  checkUVGoal();
+  RFduino_ULPDelay(MINUTES(1));
 }
