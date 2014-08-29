@@ -78,15 +78,41 @@ int tapCallback(uint32_t ulPin) {
 }
 
 void setHands() {
+//  set_pixel_color(hourFormat12(), Color(255, 0, 255));
+//  set_pixel_color(floor(minute()/5), Color(0, 255, 255));
+//  show();
+//  
+//  delay(3000);
+//
+//  set_pixel_color(hourFormat12(), Color(0, 0, 0));
+//  set_pixel_color(floor(minute()/5), Color(0, 0, 0));
+//  show();
+
+  // BLINKING METHOD
   set_pixel_color(hourFormat12(), Color(255, 0, 255));
-  set_pixel_color(floor(minute()/5), Color(0, 255, 255));
   show();
-  
-  delay(3000);
+
+  delay(1000);
+
+  blink(floor(minute()/5), Color(0, 255, 255));
+  show();
 
   set_pixel_color(hourFormat12(), Color(0, 0, 0));
   set_pixel_color(floor(minute()/5), Color(0, 0, 0));
   show();
+}
+
+void blink(uint16_t n, uint32_t c){
+  uint32_t background_color = get_pixel_color(n);
+  
+  for(int i = 0; i < 2; i++){
+    set_pixel_color(n, c);
+    show();
+    delay(500);
+    set_pixel_color(n, background_color);
+    show();
+    delay(500);
+  }
 }
 
 void checkUV() {
@@ -137,6 +163,7 @@ void checkUVGoal() {
     digitalWrite(MOTOR, HIGH);
     RFduino_ULPDelay(100);
     digitalWrite(MOTOR,LOW);
+    rainbow(20);
   }
 }
 
@@ -179,7 +206,7 @@ void setup() {
   analogReference(DEFAULT);
   pinMode(ENABLE_PIN, OUTPUT);
   pinMode(UV, INPUT);
-  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(ENABLE_PIN, HIGH);
 
   //start advertising and serial connection
   begin();
@@ -204,5 +231,7 @@ void loop() {
   checkUV();
   checkSunset();
   checkUVGoal();
+  rainbow(20);
+  Serial.println("HELLO");
   RFduino_ULPDelay(MINUTES(1));
 }

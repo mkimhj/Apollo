@@ -16,10 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+var arrayBufferToInt = function (ab) {
+    var a = new Int32Array(ab);
+    return a[0];
+};
+
 var app = {
     // Application Constructor
     initialize: function() {
         this.bindEvents();
+        detailPage.hidden = true;
     },
     // Bind Event Listeners
     //
@@ -27,23 +33,74 @@ var app = {
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
+        document.addEventListener('pause', this.onPause, false);
+        refreshButton.addEventListener('touchstart', this.refreshDeviceList, false);
+        timeButton.addEventListener('touchstart', this.sendTime);
+        deviceList.addEventListener('touchstart', this.connect, false); // assume not scrolling
+        // add logic for resume, back, menu, etc.
     },
     // deviceready Event Handler
     //
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-        app.receivedEvent('deviceready');
+        app.refreshDeviceList();
+    },
+    onPause: function() {
+        rfduino.disconnect();
     },
     // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
+    refreshDeviceList: function() {
+        deviceList.innerHTML = ''; // empties the list
+        rfduino.discover(5, app.onDiscoverDevice, app.onError);
+    },
+    onDiscoverDevice: function(device) {
+        var listItem = document.createElement('li'),
+            html = '<b>' + device.name + '</b><br/>' +
+                'RSSI: ' + device.rssi + '&nbsp;|&nbsp;' +
+                'Advertising: ' + device.advertising + '<br/>' +
+                device.uuid;
 
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
+        listItem.setAttribute('uuid', device.uuid);
+        listItem.innerHTML = html;
+        deviceList.appendChild(listItem); 
 
-        console.log('Received Event: ' + id);
-    }
+                              
+    },
+    connect: function(e) {
+        var uuid = e.target.getAttribute('uuid'),
+        cachedUUID = uuid;
+            onConnect = function() {
+                rfduino.onData(app.onData, app.onError);
+                app.showDetailPage();
+            };
+
+        rfduino.connect(uuid, onConnect, app.onError);
+    },
+    sendTime: function() {
+        rfduino.write(hour+minute+goldenHour+goldenMinute, app.writeSuccess, app.onError);
+    },
+    onData: function(data) {
+        // rfduino.write("3", app.writeSuccess, app.onError);
+        document.getElementById('sunlightMinutes').innerHTML = 'Minutes in Sunlight: ' + arrayBufferToInt(data);
+    },
+    disconnect: function() {
+        rfduino.disconnect(app.showMainPage, app.onError);
+    },
+    showMainPage: function() {
+        mainPage.hidden = false;
+        detailPage.hidden = true;
+    },
+    showDetailPage: function() {
+                            mainPage.hidden = true;
+        detailPage.hidden = false;
+    },
+    onError: function(reason) {
+        alert(reason); // real apps should use notification.alert
+    },
+    writeSuccess: function(reason){
+        // alert("you've sent info" + reason);
+        // can use this to debog if you are having trouble sending
+    },
+
 };
