@@ -62,27 +62,6 @@ int tapCallback(uint32_t ulPin) {
   return 0;
 }
 
-void setHands() {
-//  set_pixel_color(hourFormat12(), Color(255, 0, 255));
-//  set_pixel_color(floor(minute()/5), Color(0, 255, 255));
-//  show();
-//  
-//  delay(3000);
-//
-//  set_pixel_color(hourFormat12(), Color(0, 0, 0));
-//  set_pixel_color(floor(minute()/5), Color(0, 0, 0));
-//  show();
-
-  // BLINKING METHOD
-  set_pixel_color(hourFormat12(), Color(255, 0, 255));
-  show();
-
-  delay(1000);
-
-  blink(floor(minute()/5), Color(0, 255, 255));
-  show();
-}
-
 void turnOffLights() {
   for (int i = 0; i < 12; i++) {
     set_pixel_color(i, Color(0, 0, 0));
