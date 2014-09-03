@@ -7,17 +7,6 @@
 //Arduino Libraries
 #include <Time.h>
 
-//Flash memory class
-//struct data_t
-//{
-//  // we will use java's famous 0xCAFEBABE magic number to indicate
-//  // that the flash page has been initialized previously by our
-//  // sketch
-//  int magic_number;
-//  int hour;
-//  int minute;
-//};
-
 static const char* NAME = "Violet Watch";
 static const int ADVERTISEMENT_INTERVAL = 675 * 5;
 static float UV_THRESHOLD = .5;
@@ -70,7 +59,7 @@ void turnOffLights() {
 }
 
 void setHands() {
-  int h = hourFormat12() % 12;
+  int h = hour() % 12;
   int m = floor(minute()/5);
   unsigned long millisecs = millis();
   if (h == m) {
@@ -164,15 +153,12 @@ void checkUVGoal() {
   }
 }
 
-void RFduinoBLE_onReceive(char *data, int len) {
-  Serial.println(data);
-  
+void RFduinoBLE_onReceive(char *data, int len) {  
   int hours = (data[0] - '0') * 10 + (data[1] - '0');
   int minutes =  (data[2] - '0') * 10 + (data[3] - '0');
   goldenHour =  (data[4] - '0') * 10 + (data[5] - '0');
   goldenMinute =  (data[6] - '0') * 10 + (data[7] - '0');
   setTime(hours, minutes, second(), 0, 0, 0);
-  
   setHands();
   
   RFduinoBLE.sendInt(uvMinutes);

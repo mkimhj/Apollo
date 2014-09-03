@@ -36,28 +36,23 @@ var onSuccess = function(position) {
 		goldenMinute = '0' + parseInt(goldenMinute);
 	}
 
-
-	if (hour > 11) {
-		hour = hour - 12;
-		hour = hour.toString();
+	if (hour >= 12) {
 		AMPM = "PM";
+	}
+
+	document.getElementById('currentTime').innerHTML = ((hour % 12).toString()) + ':' + minute + ' ' + AMPM;
+	document.getElementById('sunsetTime').innerHTML = 'Golden Hour Begins: ' + goldenHour + ':' + goldenMinute;
+
+	if (goldenHour < 10) {
+		goldenHour = '0' + parseInt(goldenHour);
 	}
 
 	if (hour < 10) {
 		hour = '0' + parseInt(hour);
 	}
 
-	if (hour == 11 || hour == 10) {
-		hour = hour.toString();
-	}
-
-	if (goldenHour < 10) {
-		goldenHour = '0' + parseInt(goldenHour);
-	}
-
-	document.getElementById('currentTime').innerHTML = hour + ':' + minute + ' ' + AMPM;
-	document.getElementById('sunsetTime').innerHTML = 'Golden Hour Begins: ' + goldenHour + ':' + goldenMinute;
-	// getDateString();
+	hour = hour.toString();
+	goldenHour = goldenHour.toString();
 };
 
 function onError(error) {
