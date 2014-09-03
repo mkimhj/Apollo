@@ -63,6 +63,14 @@ void set_pixel_color(uint16_t n, uint32_t c) {
   }
 }
 
+uint32_t get_pixel_color(uint16_t n){
+    uint8_t
+    g = led_GRB_array[n * 3],
+    r = led_GRB_array[(n * 3) + 1],
+    b = led_GRB_array[(n * 3) + 2];
+    return Color(r, g, b);
+}
+
 void red_loop() {
   for (int i = 0; i < 12; i++) {
     set_pixel_color(i, Color(255, 0, 0));
@@ -71,5 +79,36 @@ void red_loop() {
     set_pixel_color(i, Color(0, 0, 0));
     show();
   }
+}
+
+// Input a value 0 to 255 to get a color value.
+// The colours are a transition r - g - b - back to r.
+uint32_t Wheel(byte WheelPos) {
+  if(WheelPos < 85) {
+   return Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+  } else if(WheelPos < 170) {
+   WheelPos -= 85;
+   return Color(255 - WheelPos * 3, 0, WheelPos * 3);
+  } else {
+   WheelPos -= 170;
+   return Color(0, WheelPos * 3, 255 - WheelPos * 3);
+  }
+}
+
+void rainbow(uint8_t wait) {
+  uint16_t i, j;
+  
+  for(j = 0; j < 256; j++) {
+    for(i = 0; i < number_of_pixels; i++) {
+      set_pixel_color(i, Wheel((i + j) & 255));
+    }
+    show();
+    delay(wait);
+  }
+
+  for(i = 0; i < number_of_pixels; i++){
+    set_pixel_color(i, Color(0, 0, 0));
+  }
+  show();
 }
 

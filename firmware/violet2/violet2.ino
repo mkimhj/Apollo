@@ -62,17 +62,28 @@ void setHands() {
   int h = hour() % 12;
   int m = floor(minute()/5);
   unsigned long millisecs = millis();
-  if (h == m) {
-    set_pixel_color(m, Color(32, 0, 32));
-  } else {
-    set_pixel_color(h, Color(64, 0, 0));
-    set_pixel_color(m, Color(0,  0, 64));
-  }
+  // if (h == m) {
+  //   set_pixel_color(m, Color(32, 0, 32));
+  // } else {
+  //   set_pixel_color(h, Color(64, 0, 0));
+  //   set_pixel_color(m, Color(0,  0, 64));
+  // }
+
+  // Blinking Method
+  set_pixel_color(hourFormat12(), Color(255, 0, 255));
+  show();
+
+  delay(1000);
+
+  blink(floor(minute()/5), Color(0, 255, 255));
+  //
+
   show();
   delay(75);
   while ((millis() - millisecs) < 2000) {
     if (analogRead(PIEZO) < 10) {
       displayUV();
+      rainbow(10);
       break;
     }
   }
@@ -99,6 +110,19 @@ void displayUV() {
   }
   
   delay(500);
+}
+
+void blink(uint16_t n, uint32_t c){
+  uint32_t background_color = get_pixel_color(n);
+  
+  for(int i = 0; i < 2; i++){
+    set_pixel_color(n, c);
+    show();
+    delay(500);
+    set_pixel_color(n, background_color);
+    show();
+    delay(500);
+  }
 }
 
 void checkUV() {
@@ -150,6 +174,7 @@ void checkUVGoal() {
     digitalWrite(MOTOR, HIGH);
     RFduino_ULPDelay(100);
     digitalWrite(MOTOR,LOW);
+    rainbow(20);
   }
 }
 
@@ -183,7 +208,7 @@ void setup() {
   analogReference(DEFAULT);
   pinMode(ENABLE_PIN, OUTPUT);
   pinMode(UV, INPUT);
-  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(ENABLE_PIN, HIGH);
 
   //start advertising and serial connection
   begin(); //what is this for again?..
@@ -203,5 +228,7 @@ void loop() {
   checkUV();
   checkSunset();
   checkUVGoal();
+  rainbow(20);
+  Serial.println("HELLO");
   RFduino_ULPDelay(MINUTES(1));
 }
