@@ -97,7 +97,6 @@ void displayUV() {
     delay(200);
     show();
   }
-  
   delay(500);
 }
 
@@ -109,7 +108,7 @@ void checkUV() {
     UVIntensity += .25*getUVIntensity();
   }
   
-  if (hour() < 4 && hour() > 10) {
+  if (hour() < 4 && hour() > 22) {
     UV_THRESHOLD = .9*UV_THRESHOLD + .1*UVIntensity;
   }
   
@@ -170,6 +169,7 @@ void setup() {
   //Set Device Parameters
   RFduinoBLE.deviceName = NAME;
   RFduinoBLE.advertisementInterval = ADVERTISEMENT_INTERVAL;
+  RFduinoBLE.txPowerLevel = -20;
 
   //Setup Motor
   pinMode(MOTOR, OUTPUT);

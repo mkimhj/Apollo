@@ -96,7 +96,10 @@ var app = {
         detailPage.hidden = false;
     },
     onError: function(reason) {
-        alert(reason); // real apps should use notification.alert
+        // alert(hourminute+goldenHour+goldenMinute); // real apps should use notification.alert
+        alert(minute);
+        alert(goldenHour);
+        alert(goldenMinute);
     },
     writeSuccess: function(reason){
         // alert("you've sent info" + reason);
